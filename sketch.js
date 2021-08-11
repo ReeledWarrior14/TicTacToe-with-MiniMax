@@ -61,9 +61,6 @@ function setup() {
 function draw() {
   background(0);
 
-  // cnvmargin = window.innerWidth - 1000;
-  // cnvmargin = cnvmargin/2;
-  // sel.style('marginLeft: ' + cnvmargin + 'pt');
   sel.position(900 + cnv.elt.offsetLeft, 550);
 
   push();
@@ -81,10 +78,6 @@ function draw() {
   yes();
 
   if (turn % 2 == 0 && gamestate == 'play') {
-    // console.log(turn, board);
-    // decideMove();
-    // moveStuff();
-    // bestMove(board, 0, turn);
     whyLife(board, 0, turn);
     turn++
     check();
@@ -181,18 +174,14 @@ function mousePressed() {
     var mY = mouseY;
     var X = Math.round((mX - 100) / 200) - 1;
     var Y = Math.round((mY - 200) / 200);
-    // console.log(Math.round((mX-100)/200));
-    // console.log(X, Y);
-
-    // board[Y].splice(X, 1, 'Xg');
 
     if (inRange(X, 0, 2) && inRange(Y, 0, 2)) {
       if (board[Y][X] != 'X' && board[Y][X] != 'O') {
-        turn++ // this is wierd normally i would change it after doing the turn
-        if (turn % 2 == 1) { // if i change turn after the actual turn this would be  turn % 2 == 0
+        turn++
+        if (turn % 2 == 1) { 
           // board[Y].splice(X, 1, 'X');
         }
-        else if (turn % 2 == 0){ // if i change turn after the actual turn this would be  turn % 2 == 1
+        else if (turn % 2 == 0){
           board[Y].splice(X, 1, 'O');
         }
       }
@@ -224,12 +213,11 @@ function inRange(x, min, max) {
 }
 
 async function yes() {
-  check(); // we should not have to check here if we check before comp makes move and before player
+  check();
   for (var i = 0; i < 3; i++) {
     for (var j = 0; j < 3; j++) {
       if (board[i][j] == 'O') {
         // console.log(j, i)
-        // console.log(j * cell + 300, i * cell + 200)
         push();
         stroke('green');
         strokeWeight(15);
@@ -240,7 +228,6 @@ async function yes() {
         push();
         stroke('red');
         strokeWeight(15);
-        // console.log(j, i);
         line(j * cell + 250, i * cell + 150, j * cell + 350, i * cell + 250);
         line(j * cell + 250, i * cell + 250, j * cell + 350, i * cell + 150);
         pop();
@@ -305,7 +292,6 @@ function check() {
     [board[0][0], board[1][1], board[2][2]],
     [board[2][0], board[1][1], board[0][2]],
   ]
-  // console.log(columns);
 
   for (var i = 0; i < 3; i++) {
     if (allEqual(columns[i]) && columns[i][1] != '_') {
@@ -326,10 +312,7 @@ function check() {
   var idk = 0;
   for (var i = 0; i < 3; i++) {
     if (board[i].includes('_') == false && gamestate == 'play') {
-      // console.log(board[i].includes('_'));
-      // console.log(idk, i);
       idk++
-      // console.log(idk, i);
     }
     if (idk == 3) {
       console.log('Tie!')
@@ -348,7 +331,6 @@ function checkBoard(bd1) {
     [bd1[0][0], bd1[1][1], bd1[2][2]],
     [bd1[2][0], bd1[1][1], bd1[0][2]],
   ]
-  // console.log(columns);
 
   for (var i = 0; i < 3; i++) {
     if (allEqual(columns[i]) && columns[i][1] != '_') {
@@ -388,269 +370,7 @@ function checkBoard(bd1) {
   return 'no';
 }
 
-function bestMove(bd, depth, tn) { // not the best eh... not impossible to beat and wierd but works ig as an easy ai
-
-  // var bed = bd;
-
-  // console.log('start', board[0]);
-  // console.log(depth, bed, board);
-  // console.log(depth, bed[2][1] = 'O');
-  // console.log(bd[1][1] = 'X');
-  // console.log(bd);
-  // console.log(bd[1].splice(1, 1, 'X'));
-
-  if (checkBoard(bd) != 'no' || depth == maxDepth) {
-    // console.log('checkboard', depth, board[1]);
-    if (checkBoard(bd) == 'X') {
-      return 100 - depth;
-    } else {
-      return -100 + depth;
-    }
-  }
-
-  if (tn % 2 == 0) {
-    best = -100;
-
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
-        if (bd[i][j] == '_') {
-
-          // console.log('1', board[0], board[1], board[2]);
-          var b1 = bd;
-          b1[i].splice(j, 1, 'X');
-          // console.log('2', board[0], board[1], board[2]);
-
-          // value = bestMove(bd[i].splice(j, 1, 'X'), depth + 1, tn + 1);
-          // value = bestMove(bd[i][j] = 'X', depth + 1, tn + 1);
-          value = bestMove(b1, depth + 1, tn + 1);
-
-          b1[i].splice(j, 1, '_');
-
-          if (value > best) {
-            bestMoves = [i, j] //i is y axis j is x axis
-          }
-
-          best = Math.max(best, value);
-        }
-      }
-    }
-
-    if (depth == 0) { // it never reaches the splice before the board changes
-
-      // b2 = board;
-      // b2[bestMoves[0]].splice(bestMoves[1], 1, 'X');
-      // console.log(b2, board);
-      // console.log('why');
-      console.log(board, bestMoves);
-      board[bestMoves[0]].splice(bestMoves[1], 1, 'X');
-      // console.log(board, bestMoves);
-    }
-  }
-
-  if (tn % 2 == 1) {
-    best = 100;
-
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
-        if (bd[i][j] == '_') {
-
-          // console.log(board[0], board[1], board[2]);
-          var b1 = bd;
-          b1[i].splice(j, 1, 'O');
-
-          // value = bestMove(bd[i].splice(j, 1, 'O'), depth + 1, tn + 1);
-          // value = bestMove(bd[i][j] = 'O', depth + 1, tn + 1);
-          value = bestMove(b1, depth + 1, tn + 1);
-
-          b1[i].splice(j, 1, '_');
-
-          if (value < best) {
-            bestMoves = [i, j] //i is y axis j is x axis
-            // console.log(bestMoves);
-          }
-
-          best = Math.min(best, value);
-        }
-      }
-    }
-
-    if (depth == 0) {
-      // console.log('why2');
-      console.log(board, bestMoves);
-      board[bestMoves[0]].splice(bestMoves[1], 1, 'X');
-      // console.log(board);
-    }
-  }
-}
-
-function decideMove() {
-
-  best = -100;
-
-  var move = [];
-
-  for (var i = 0; i < 3; i++) {
-    for (var j = 0; j < 3; j++) {
-
-      if (board[i][j] == '_') {
-
-        bd = Array.from(board);
-        // console.log(bd[0], bd[1], bd[2], board[0], board[1], board[2]);
-        bd[i].splice(j, 1, 'X');
-
-        var score = minimax(bd, 0, turn);
-
-        bd[i].splice(j, 1, '_');
-
-        if (score > best) {
-          best = score;
-          move = [i, j];
-        }
-      }
-    }
-  }
-
-  console.log(board, move);
-  board[move[0]].splice(move[1], 1, 'X');
-}
-
-function minimax(localBoard, depth, localTurn) {
-
-  if (checkBoard(localBoard) != 'no' || depth == maxDepth) {
-    // console.log('checkboard', depth, board[1]);
-    if (checkBoard(localBoard) == 'X') {
-      return 100 - depth;
-    } else {
-      return -100 + depth;
-    }
-  } 
-
-  if (localTurn % 2 == 0) {
-    var bestScore = -100;
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
-
-        if (board[i][j] == '_') {
-
-          var bd = Array.from(localBoard);
-          // console.log(depth, bd[0], bd[1], bd[2], board[0], board[1], board[2]);
-
-          bd[i].splice(j, 1, 'X');
-
-          localScore = minimax(bd, depth + 1, localTurn + 1);
-
-          board[i].splice(j, 1, '_');
-
-          bestScore = max(bestScore, localScore);
-        }
-      }
-    }
-
-    return bestScore;
-  }
-
-  if (localTurn % 2 == 1) {
-    var bestScore = 100;
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
-
-        if (board[i][j] == '_') {
-
-          var bd = Array.from(localBoard);
-          // console.log(depth, bd[0], bd[1], bd[2], board[0], board[1], board[2]);
-
-          bd[i].splice(j, 1, 'O');
-
-          localScore = minimax(bd, depth + 1, localTurn + 1);
-
-          board[i].splice(j, 1, '_');
-
-          bestScore = min(bestScore, localScore);
-        }
-      }
-    }
-
-    return bestScore;
-  }
-}
-
-function moveStuff() {
-  var bestScore = -Infinity;
-  var move;
-  for (var i = 0; i < 3; i++) {
-    for (var j = 0; j < 3; j ++) {
-      if (board[i][j] == '_') {
-        board[i][j] = 'X';
-        var score = minimaxTry2(board, 0, turn);
-        board[i][j] = '_';
-        if (score > bestScore) {
-          bestScore = score;
-          move = [i, j];
-        }
-      }
-    }
-  }
-  board[move[0]][move[1]] = 'X';
-}
-
-function minimaxTry2(localBoard, depth, localTurn) {
-
-  if (checkBoard(localBoard) != 'no' || depth == maxDepth) {
-    // console.log('checkboard', depth, board[1]);
-    if (checkBoard(localBoard) == 'X') {
-      return 100 - depth;
-    } else {
-      return -100 + depth;
-    }
-  }
-
-  if (localTurn % 2 == 0) {
-    var bestScore = -Infinity;
-
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j ++) {
-        if (board[i][j] == '_') {
-          board[i][j] = 'X';
-          var score = minimaxTry2(board, depth + 1, localTurn + 1);
-          board[i][j] = '_';
-          bestScore = max(score, bestScore);
-        }
-      }
-    }
-
-    return bestScore;
-  }
-  else {
-    var bestScore = Infinity;
-
-    for (var i = 0; i < 3; i++){
-      for (var j = 0; j < 3; j ++) {
-        if (board[i][j] == '_') {
-          board[i][j] = 'O';
-          var score = minimaxTry2(board, depth + 1, localTurn + 1);
-          board[i][j] = '_';
-          bestScore = min(score, bestScore);
-        }
-      }
-    }
-
-    return bestScore;
-  }
-}
-
-function whyLife(localBoard, depth, localTurn) { // remake the alialaa or whatever version idk
-
-  // if (checkBoard(localBoard) != 'no' && depth == maxDepth) { // this does not work for some reason
-  //   // console.log('checkboard', depth, board[1]);
-  //   console.log(depth, localBoard[0], localBoard[1], localBoard[2])
-  //   if (checkBoard(localBoard) == 'X') {
-  //     return 100 - depth;
-  //   } else if (checkBoard(localBoard) == 'O') {
-  //     return -100 + depth;
-  //   } else {
-  //     return 0;
-  //   }
-  // }
+function whyLife(localBoard, depth, localTurn) {
 
   if (checkBoard(localBoard) != 'no' || depth == maxDepth) {
     // console.log('checkboard', depth, board[1]);
@@ -683,7 +403,6 @@ function whyLife(localBoard, depth, localTurn) { // remake the alialaa or whatev
 
           // console.log(depth, score, best);
           if (score > best && depth == 0) {
-            // console.log('yue');
             stuff = [i, j]; // y, x or array[i].splice(j, 1, 'replacement');
             // console.log(stuff);
           }
