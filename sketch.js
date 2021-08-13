@@ -1,4 +1,4 @@
-// Anay 2021, this project took 4 tries at the minimax algorithm and way too much time
+// ReeledWarrior14 2021, this project took 4 tries at the minimax algorithm and way too much time
 
 var board =
   [
@@ -292,27 +292,79 @@ function check() {
     [board[0][0], board[1][1], board[2][2]],
     [board[2][0], board[1][1], board[0][2]],
   ]
+  // console.log(columns);
+  angleMode(DEGREES);
 
   for (var i = 0; i < 3; i++) {
     if (allEqual(columns[i]) && columns[i][1] != '_') {
       console.log(columns[i][1] + ' won! (column)');
       gamestate = columns[i][1] + ' won!';
+
+      push();
+      stroke('orange');
+      strokeWeight(15);
+      noFill();
+      line((i + 1.15) * cell, 200, (i + 1.15) * cell, 600);
+      line((i + 1.85) * cell, 200, (i + 1.85) * cell, 600);
+      arc(i * cell + 300, 200, 140, 150, -180, 0, OPEN);
+      arc(i * cell + 300, 600, 140, 150, 0, -180, OPEN);
+      pop();
     } else if (allEqual(board[i]) && board[i][1] != '_') {
       console.log(board[i][1] + ' won! (row)');
       gamestate = board[i][1] + ' won!';
+
+      push();
+      stroke('orange');
+      strokeWeight(15);
+      noFill();
+      line(250, (i + 0.65) * cell, 750, (i + 0.65) * cell);
+      line(250, (i + 1.35) * cell, 750, (i + 1.35) * cell);
+      arc(250, i * cell + 200, 125, 140, 90, -90, OPEN);
+      arc(750, i * cell + 200, 125, 140, -90, 90, OPEN);
+      pop();
     }
   }
   for (var i = 0; i < 2; i++) {
     if (allEqual(diagonals[i]) && diagonals[i][1] != '_') {
-      console.log(diagonals[i][1] + ' won! (diagonal)');
+      console.log(diagonals[i][1] + ' won! (diagonal)'); // do ellipse/line/arc thing for diagonals
       gamestate = diagonals[i][1] + ' won!';
+
+      // console.log(diagonals);
+      // console.log(diagonals[1][0], diagonals[i][1], allEqual(diagonals[0]));
+
+      if (allEqual(diagonals[0])) {
+        push();
+        stroke('orange');
+        strokeWeight(15);
+        noFill();
+        line(250, 250, 650, 650);
+        // console.log(Math.round(dist(235, 235, 655, 655)), Math.round(dist(345, 145, 765, 565))); // 300, 200, 700, 600
+        line(350, 150, 750, 550);
+        arc(300, 200, 141, 141, 135, -45, OPEN);
+        arc(700, 600, 141, 141, -45, 135, OPEN);
+        pop();
+      } else if (allEqual(diagonals[1])) {
+        push();
+        stroke('orange');
+        strokeWeight(15);
+        noFill();
+        line(650, 150, 250, 550);
+        // console.log(Math.round(dist(235, 235, 655, 655)), Math.round(dist(345, 145, 765, 565))); // 700 200, 300 600
+        line(750, 250, 350, 650);
+        arc(700, 200, 141, 141, -135, 45, OPEN);
+        arc(300, 600, 141, 141, 45, -135, OPEN);
+        pop();
+      }
     }
   }
 
   var idk = 0;
   for (var i = 0; i < 3; i++) {
     if (board[i].includes('_') == false && gamestate == 'play') {
+      // console.log(board[i].includes('_'));
+      // console.log(idk, i);
       idk++
+      // console.log(idk, i);
     }
     if (idk == 3) {
       console.log('Tie!')
